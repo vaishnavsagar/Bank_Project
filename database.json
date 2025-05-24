@@ -1,0 +1,23 @@
+{
+    "9781916": {
+        "name": "Bhawani",
+        "dob": "12345",
+        "phone": "9876543210",
+        "address": "Jodhpur",
+        "email": "abcw@gmail.com",
+        "password": "12ASDCXdfdc#$%^&",
+        "adhaar no": "1111222233334",
+        "balance": 0
+    },
+
+    "0637051": {
+        "name": "Aman",
+        "dob": "20-20-2023",
+        "phone": "1234567890",
+        "address": "Jaipur",
+        "email": "def@gmail.com",
+        "password": "12ABab@#$%",
+        "adhaar no": "222233333",
+        "balance": 0
+    }
+}
