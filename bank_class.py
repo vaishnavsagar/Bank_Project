@@ -13,7 +13,11 @@ class BankManagement:
         else:
             print("please insert valid phone number")
             exit()
-        
+
+    def bring_data_from_db(self):
+        with open('database.json', 'r') as f:
+            database = json.load(f)
+        return database              
 
     def check_password_strength(self) -> str:
         password = input("password   :    ")
@@ -44,7 +48,27 @@ class BankManagement:
         return ''.join(random.choices(digits, k = 7))
 
     def loginWindow(self):
-        print("this is the login window")
+        self.login_account_no = input("Account Number: ")
+        self.login_password = input("Password: ")
+
+        database =  self.bring_data_from_db
+        
+        
+        if self.login_account_no in database.keys(): # Check if your account number in database
+            db_password = database[self.login_account_no]["password"] # Password from database
+            user_info = database[self.login_account_no]
+            if self.login_password == db_password: # Checking if login password matched with your database password
+                cap = CustomerAccessPortal(self.login_account_no, user_info)
+            else:
+                print("wrong password")
+                print("exitting the app.............")
+                exit()
+        else:
+            print("no such account exists")
+            print("exitting the app.............")
+            exit()
+
+
 
     def welcome_window(self):
         print("-------------------Welcome Window---------------")
@@ -65,8 +89,7 @@ class BankManagement:
 
     
     def signUpWindow(self):
-        with open('database.json', 'r') as f:
-            database = json.load(f)
+        database = self.bring_data_from_db()
             
         user_info = { 
                             "name"         : input("name       :    "),
@@ -87,3 +110,48 @@ class BankManagement:
  
         print("Account succesfully Created. Info= ", user_info) 
         
+        
+
+
+class CustomerAccessPortal:
+    def __init__(self, account_no, user_info):
+        self.acc_no = account_no
+        self.user_info = user_info
+        self.customer_window()
+
+    def check_balance(self):
+        return self.user_info["balance"]
+    
+    def withdraw_amount(self):
+        pass
+
+    def deposit_amount(self):
+        pass
+
+    def balance_transfer(self):
+        pass
+
+    def customer_window(self):
+        print("-------------This is the customer window -------------")
+        choice = input ("""
+                        1: Check balance
+                        2: Withdraw
+                        3: Deposit
+                        4: Balance Transfer
+                        5: exit
+                        """)
+        if choice == '1':
+            print("Your current balance = ", self.check_balance)
+
+        elif choice == '2':
+            self.withdraw_amount()
+
+        elif choice == '3':
+            self.deposit_amount()
+
+        elif choice == '4':
+            self.balance_transfer()
+
+        elif choice == '5':
+            exit()
+    
