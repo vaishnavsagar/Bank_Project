@@ -15,7 +15,7 @@ class BankManagement:
             exit()
 
     def bring_data_from_db(self):
-        with open('database.json', 'r') as f:
+        with open(r'database.json', 'r') as f:
             database = json.load(f)
         return database              
 
@@ -51,14 +51,15 @@ class BankManagement:
         self.login_account_no = input("Account Number: ")
         self.login_password = input("Password: ")
 
-        database =  self.bring_data_from_db
+        database =  self.bring_data_from_db()
         
         
         if self.login_account_no in database.keys(): # Check if your account number in database
             db_password = database[self.login_account_no]["password"] # Password from database
             user_info = database[self.login_account_no]
             if self.login_password == db_password: # Checking if login password matched with your database password
-                cap = CustomerAccessPortal(self.login_account_no, user_info)
+                cap = CustomerAccessPortal(self.login_account_no, user_info, database)
+
             else:
                 print("wrong password")
                 print("exitting the app.............")
@@ -114,44 +115,77 @@ class BankManagement:
 
 
 class CustomerAccessPortal:
-    def __init__(self, account_no, user_info):
+    def __init__(self, account_no, user_info, db):
+        self.db = db
         self.acc_no = account_no
         self.user_info = user_info
         self.customer_window()
+        
+        
+    def make_changes_in_db(self):
+        with open('database.json', 'w') as f:
+            json.dump(self.db, f)
 
     def check_balance(self):
         return self.user_info["balance"]
     
     def withdraw_amount(self):
-        pass
+        amount = float(input("Amount: "))
+        bank_balance = self.check_balance()
+        if amount <= 0:
+            print("amont can't be negative or zero")
+            
+        elif amount > bank_balance:
+            print("Insufficient amount")
+            
+        else:
+            bank_balance -= amount   
+            self.user_info["balance"] = bank_balance
+            self.db[self.acc_no] = self.user_info
+            self.make_changes_in_db()
+            print(f"Rs {amount = } withdrawn succesffully, remaining balance = {self.check_balance()}")
+
+        
 
     def deposit_amount(self):
-        pass
-
+        amount = float(input("Amount: "))
+        bank_balance = self.check_balance()
+        if amount <= 0:
+            print("amount can't be negative or zero")
+            
+        else:
+            bank_balance += amount   
+            self.user_info["balance"] = bank_balance
+            self.db[self.acc_no] = self.user_info
+            self.make_changes_in_db()
+            print(f"Rs {amount = } deposited succesffully, Updated balance = {self.check_balance()}")
+        
     def balance_transfer(self):
         pass
+                
 
     def customer_window(self):
         print("-------------This is the customer window -------------")
-        choice = input ("""
-                        1: Check balance
-                        2: Withdraw
-                        3: Deposit
-                        4: Balance Transfer
-                        5: exit
-                        """)
-        if choice == '1':
-            print("Your current balance = ", self.check_balance)
+        while True:
+            choice = input ("""
+                            1: Check balance
+                            2: Withdraw
+                            3: Deposit
+                            4: Balance Transfer
+                            5: exit
+                            """)
+            if choice == '1':
+                print("Your current balance = ", self.check_balance())
 
-        elif choice == '2':
-            self.withdraw_amount()
+            elif choice == '2':
+                self.withdraw_amount()
 
-        elif choice == '3':
-            self.deposit_amount()
+            elif choice == '3':
+                self.deposit_amount()
 
-        elif choice == '4':
-            self.balance_transfer()
+            elif choice == '4':
+                self.balance_transfer()
 
-        elif choice == '5':
-            exit()
+            elif choice == '5':
+                exit()
     
