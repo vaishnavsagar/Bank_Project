@@ -161,8 +161,19 @@ class CustomerAccessPortal:
             print(f"Rs {amount = } deposited succesffully, Updated balance = {self.check_balance()}")
         
     def balance_transfer(self):
-        pass
-                
+        receiver_acc_no = input("account no:  ")
+        our_balance = self.check_balance()
+        if receiver_acc_no in self.db:
+            amount = int(input("Amount: "))
+            if amount > 0 and amount <= our_balance:
+                receiver_current_balance = self.db[receiver_acc_no]["balance"]
+                receiver_current_balance = receiver_current_balance + amount
+                our_balance = our_balance - amount
+                self.db[receiver_acc_no]["balance"] = receiver_current_balance
+                self.db[self.acc_no]["balance"] = our_balance
+                self.make_changes_in_db()
+                print(f"Rs {amount = } transfered succesffully, remaining balance = {self.check_balance()}")
+
 
     def customer_window(self):
         print("-------------This is the customer window -------------")
